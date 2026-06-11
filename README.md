@@ -2,12 +2,22 @@
 
 > **面向初学者的 Java 交互式学习与编译运行工作台原型**
 
+[![GitHub Pages](https://img.shields.io/badge/pages-GitHub-blueviolet.svg)](https://pursuing-coding.github.io/java-path/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Playwright Tests](https://img.shields.io/badge/tests-Playwright-orange.svg)](https://playwright.dev/)
-[![GitHub Pages](https://img.shields.io/badge/pages-GitHub-blueviolet.svg)](https://wangjiehu.github.io/java-path/)
 
 `java-path` 是一个开箱即用的 Java 学习工作台。它集成了**课程讲解**、**官方资料**、**学习路径**、**代码编辑器**、**标准输入 (stdin)**、**控制台输出**和**自动化提交验证**。全网共有 **13 个 Level、104 个关卡**，逐步引导学习者从 `Hello World` 迈向 `Spring Boot` 实战和高并发 JVM 原理。
+
+---
+
+## 🔗 在线体验 / Live Demo
+
+🚀 **直接访问在线体验网址**：👉 **[https://pursuing-coding.github.io/java-path/](https://pursuing-coding.github.io/java-path/)** 👈
+
+> [!TIP]
+> **在线预览模式（免 JDK 安装）**：网页端集成了轻量级语法解析模拟引擎，支持直接预览体验全网共 **13 个 Level、104 个关卡** 的 Java 基础输出、变量和字符串拼接！
+> 如需体验真实的 Java SDK 编译运行、安全沙箱控制及标准输入（Scanner）交互，请按照下方 [快速开始](#-快速开始) 指引在本地启动 Node.js 服务。
 
 ---
 
