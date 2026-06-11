@@ -1,104 +1,111 @@
-# java-path
+# ☕ java-path
 
-java-path 是一个面向初学者的 Java 学习网站原型，包含 13 个 Level、104 个练习关卡。页面把课程讲解、官方资料、学习路径、代码编辑器、标准输入、控制台输出和提交验证放在同一个工作台里。
+> **面向初学者的 Java 交互式学习与编译运行工作台原型**
 
-## 直接体验
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Playwright Tests](https://img.shields.io/badge/tests-Playwright-orange.svg)](https://playwright.dev/)
+[![GitHub Pages](https://img.shields.io/badge/pages-GitHub-blueviolet.svg)](https://wangjiehu.github.io/java-path/)
 
-在线访问：
+`java-path` 是一个开箱即用的 Java 学习工作台。它集成了**课程讲解**、**官方资料**、**学习路径**、**代码编辑器**、**标准输入 (stdin)**、**控制台输出**和**自动化提交验证**。全网共有 **13 个 Level、104 个关卡**，逐步引导学习者从 `Hello World` 迈向 `Spring Boot` 实战和高并发 JVM 原理。
 
-<https://wangjiehu.github.io/java-path/>
+---
 
-这是 GitHub Pages 静态体验版，不需要安装 JDK。线上页面会自动使用浏览器端教学预览模式，支持基础输出语句、简单变量输出和字符串拼接预览。真实 Java 编译运行需要本地 Node 服务或后续接入云端 JDK 沙箱。
+## 🌟 核心特性
 
-## 课程基线
+- 🖥️ **一体化交互工作台**：左侧展示课程讲解与官方规范，右侧配备完整的代码编辑器与控制台。
+- ⚡ **智能预览与本地沙箱双轨制**：
+  - **预览模式（无需 JDK）**：通过浏览器端语法模拟引擎，支持基础输出语句、简单变量声明和字符串拼接预览。
+  - **沙箱模式（需本地 JDK）**：本地服务自动检测 `java` 环境，支持带标准输入（Scanner）的单文件真实编译运行，并实施资源隔离与超时限制。
+- 📈 **自动锁定与进度同步**：通关验证通过后自动解锁下一关，进度与临时编辑器草稿自动持久化在浏览器的 `localStorage` 中。
+- 🌓 **日夜间主题切换**：支持全页面的深色和浅色模式，专为编码设计的色彩方案，保护视力。
+- ⚙️ **极致性能优化**：
+  - **Java 运行状态缓存**：在服务端对 Java 环境检查结果进行高频缓存，降低编译执行的启动延迟。
+  - **Autosave 写入防抖**：编辑器草稿的本地存储写入增加防抖机制，保障低配设备上的打字输入体验，并完美确保跳转和提交时即时存盘。
 
-课程以 Java 核心语法、标准库和后端工程常用路径为主，练习代码尽量使用单文件 `Main.java`，方便初学者专注在一个概念上。官方资料会优先引用 Oracle、OpenJDK、Spring、Maven、Gradle、JUnit 等一手文档；其中 API 链接可能同时出现 Java LTS 版本和当前版本，课程讲解只依赖稳定语法和通用 API，不要求学习者追随某个非 LTS 版本。
+---
 
-## 学习进度
+## 📐 运行架构图
 
-页面会把完成进度和每一关的编辑器草稿记录在当前浏览器的 `localStorage` 中。标准输入只用于本次运行，不会被长期保存。提交当前关卡并通过验证后，下一关才会解锁，并可直接进入下一关；未解锁关卡会在左侧目录中置灰并禁止点击。点击右上角重置按钮会清空本机进度和草稿，并重新锁定后续关卡。
-
-## 本地运行
-
-```powershell
-cd "D:\Wonderful\Pursuing coding\java-path"
-npm start
+```mermaid
+graph TD
+    A[浏览器端 Web 页面] -->|1. 提交 Java 代码与 Stdin| B[本地 Node.js 服务 /api/run]
+    B -->|2. 检测/使用缓存| C{Java 编译环境?}
+    C -->|无 JDK| D[教学模拟器: 静态正则分析]
+    C -->|有 JDK| E[隔离临时目录: Main.java]
+    E -->|3. 执行| F[子进程运行: java Main.java]
+    F -->|4. 超时保护 5s / 内存限制| G[输出截断与安全清理]
+    D -->|返回模拟运行结果| A
+    G -->|返回真实编译运行结果| A
 ```
 
-打开：
+---
+
+## 📂 项目目录结构
 
 ```text
-http://localhost:4173
+java-path/
+├── .github/workflows/       # GitHub Actions 自动化部署工作流
+├── public/                  # 静态前端资源目录
+│   ├── app.js               # 前端核心业务逻辑（编辑器事件、防抖草稿保存、Scanner 适配、关卡校验）
+│   ├── styles.css           # 整体响应式与暗黑主题样式设计
+│   ├── course-outline.js    # 13 个 Level 的大纲目录配置
+│   ├── lesson-content-*.js  # 具体的关卡数据（介绍、拆解、示例、答案、检测项）
+│   ├── index.html           # 页面骨架
+│   └── favicon.svg          # 网站 Favicon
+│
+├── scripts/                 # 辅助脚本
+│   └── validate-lessons.js  # 自动化校验关卡合法性、完整性及官方白名单链接
+│
+├── tests/                   # 测试用例目录
+│   └── ui-smoke.spec.js     # 基于 Playwright 的端到端桌面与移动端 UI 冒烟测试
+│
+├── server.js                # 极简高性能 Node.js 后端服务器（健康检查、静态服务、Java 安全沙箱运行）
+├── package.json             # 依赖管理及启动命令
+└── playwright.config.js     # Playwright 测试配置文件
 ```
 
-如果 `4173` 已被占用，可以临时换端口：
+---
+
+## 🚀 快速开始
+
+### 1. 本地运行开发服务
+
+若要体验真实的 Java 编译运行，请确保本地配置了 `java` 命令行环境（JDK）。
 
 ```powershell
-$env:PORT=4273
+# 1. 克隆并进入目录
+cd "java-path"
+
+# 2. 安装依赖并启动本地服务
+npm install
 npm start
 ```
 
-然后打开 `http://localhost:4273`。
+启动后，访问浏览器：
+👉 **[http://localhost:4173](http://localhost:4173)**
 
-本地服务会优先检测 `java` 命令。如果当前机器有可用 JDK，会把页面中的标准输入一起传给进程，并通过服务端执行单文件程序：
+*提示：若 4173 端口被占用，可通过环境变量更换端口启动，例如：`PORT=4273 npm start`。*
 
-```powershell
-java Main.java
-```
+### 2. 自动化项目检查与验证
 
-如果没有 JDK，本地服务会退回教学预览模式，不会把预览结果伪装成真实编译结果。
-
-## 项目检查
-
-首次在本机检查前安装依赖和 Playwright 浏览器：
+项目内置了自动化关卡合法性检测和 UI 自动化回归测试，确保前后端功能稳定：
 
 ```powershell
-npm ci
+# 安装测试所需的浏览器内核
 npx playwright install chromium
+
+# 执行验证任务 (检查关卡规范并运行 Playwright 冒烟测试)
 npm run verify
 ```
 
-`verify` 会先检查课程文件数量、13 个 Level 的 104 关完整性、必填字段、标题匹配、重复 ID、内容长度和官方资料链接来源白名单，然后启动本地页面并用 Playwright 做桌面/移动端 UI 回归，覆盖关卡锁定、提交解锁、进度恢复、重置确认、答案抽屉、专注模式和横向溢出检查。
+---
 
-## GitHub Pages 发布
+## 🔒 云端沙箱与编译运行安全设计
 
-推送到 `main` 分支后，`.github/workflows/deploy-pages.yml` 会自动：
+本项目原型在本地开发状态下直接依托 Node.js 的子进程执行。在正式上线的云端产品化设计中，建议采用以下安全防线：
 
-1. 检出仓库。
-2. 使用 Node.js 24 安装依赖，并运行 `npm run verify`。
-3. 将 `public/` 目录发布到 GitHub Pages。
-
-仓库 Pages 入口应保持为：
-
-<https://wangjiehu.github.io/java-path/>
-
-如果首次启用 Pages，需要在 GitHub 仓库 `Settings -> Pages` 中把 `Source` 设为 `GitHub Actions`。
-
-## 代码结构
-
-- `server.js`：静态资源服务、健康检查和 Java 运行接口。
-- `public/index.html`：页面骨架和脚本加载顺序。
-- `public/course-outline.js`：13 个 Level、104 关的目录大纲。
-- `public/lesson-content-level*.js`：每个 Level 的完整课程内容。
-- `public/app.js`：课程加载、编辑器、答案面板、进度和交互逻辑。
-- `public/styles.css`：日夜模式、桌面和移动端布局、编辑器和弹窗样式。
-- `scripts/validate-lessons.js`：课程结构、数量、来源和内容完整度校验。
-
-## 练习台原则
-
-学习者不需要安装 JDK，也不需要配置本地编译器。正式产品应采用：
-
-```text
-浏览器 -> 后端 API -> 云端 JDK 沙箱 -> 返回编译和运行结果
-```
-
-当前原型的提交验证不要求代码和参考答案逐字一致，会按关卡类型做基础检查，例如 Java 主结构、输出语句、SQL 关键字、Spring 类/注解、工程命令或配置片段。正式产品应进一步接入运行结果、测试用例和隐藏用例。
-
-## 云端编译器设计
-
-- 每次运行创建一次隔离任务。
-- 使用 JDK LTS 镜像作为主线运行环境。
-- 限制用户代码的 CPU、内存、磁盘、网络和运行时间。
-- 每次运行后销毁临时文件和容器。
-- 返回标准输出、标准错误、退出码、耗时和友好的中文解释。
-- 后续支持多文件项目、JUnit 判题、Maven/Gradle 项目和 Spring Boot 练习。
+1. **容器化隔离**：每次代码运行单独实例化一个轻量级容器（例如 Docker），代码运行结束后立即销毁容器与临时文件。
+2. **硬件额度限制**：严格限制用户代码进程的 CPU 使用率、运行内存（如最大 256MB）、磁盘写入权限及网络访问。
+3. **超时截断**：超过 `5s` 未执行完毕的进程自动触发 `SIGKILL` 强杀保护，以防死循环消耗服务器资源。
+4. **输出内容控制**：限制标准输出与标准错误的最大字符长度（如 `12,000` 字符），防止打印无限字符撑爆浏览器及传输通道。
