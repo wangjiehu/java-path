@@ -1,0 +1,19 @@
+{
+  "name": "java-path",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A Java learning path website prototype with an integrated local Java runner.",
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/validate-lessons.js",
+    "smoke:ui": "playwright test",
+    "verify": "npm run check && npm run smoke:ui",
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
+  }
+}
